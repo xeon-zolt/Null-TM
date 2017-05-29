@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+from gi.repository import Gtk
+from gi.repository import Gio
+import sys
+import os
+import subprocess
+
+class NULLtheme(Gtk.Application):
+    lock = True
+    command = 1
+    message = Gtk.Dialog()
+    def do_activate(self):
+        window = Gtk.Window(application=self)
+        window.set_title("NUll THEMER")
+        self.initWindow(window)
+        window.show_all()
+    def initWindow(self,window):
+        #window.set_default_size(200,200)
+        window.set_resizable(False)
+        main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        box1 = Gtk.Box(spacing=6)
+
+        theme1 = Gtk.RadioButton(label="Blue theme")
+        theme1.connect("toggled",self.toggled_radio_theme1)
+
+        theme2 = Gtk.RadioButton.new_from_widget(theme1)
+        theme2.set_label("Orange Theme (bad theme do not apply)")
+        theme2.connect("toggled",self.toggled_radio_theme2)
+
+        box2 = Gtk.Box(spacing=6)
+
+        apply = Gtk.Button(label = "Apply")
+        apply.connect("clicked",self.on_apply_clicked)
+
+        exit = Gtk.Button(label ="Exit")
+        exit.connect("clicked",self.on_exit_clicked)
+
+        box2.add(apply)
+        box2.add(exit)
+        main.set_margin_left(20)
+        main.set_margin_top(20)
+        main.set_margin_right(20)
+        main.set_margin_bottom(20)
+        main.add(theme1)
+        main.add(theme2)
+
+        status = self.check_theme()
+        main.add(Gtk.Label("Status: "+status))
+        main.add(box2)
+        window.add(main)
+        window.set_default_icon_from_file("icon.png")
+        window.set_position(Gtk.WindowPosition.CENTER)
+
+    def toggled_radio_theme1(self,button):
+        self.command = 1
+
+    def toggled_radio_theme2(self,button):
+        self.command = 2
+
+    def check_theme(self):
+        cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event branch | grep \*"
+        branch = subprocess.check_output(cmd,shell=True)
+        print (branch)
+        if branch == b'* master\n':
+            return 'No Above theme Applied'
+        elif branch == b'* blue-face-theme\n' :
+            return 'Blue Theme'
+        elif branch == b'* Orange-Flat\n':
+            return 'Orange Theme'
+        else:
+            return 'Some Error'
+
+    def on_apply_clicked(self,widget):
+        print (self.command)
+
+        if self.command == 1:
+            cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event checkout blue-face-theme"
+            branch = subprocess.check_output(cmd,shell=True)
+            os.system('dconf load /org/cinnamon/ < themeset')
+            print (branch)
+            #self.message_dialog()
+
+        elif self.command == 2:
+            cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event checkout Orange-Flat"
+            branch = subprocess.check_output(cmd,shell=True)
+            os.system('dconf load /org/cinnamon/ < themeset')
+            print (branch)
+            #self.message_dialog()
+            '''
+    def message_dialog(self):
+        content_area = self.message.get_content_area()
+        content_area.add(Gtk.Label("You need to restart the session for the change to take effect."))
+        self.message.show_all()
+        '''
+
+    def on_exit_clicked(self,widget):
+        sys.exit()
+
+app = NULLtheme();
+exit_status = app.run(sys.argv)
+sys.exit(exit_status)
