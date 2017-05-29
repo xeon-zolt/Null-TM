@@ -1,0 +1,6 @@
+#!/bin/bash
+
+git clone https://github.com/xeon-zolt/Theme.git $HOME/.themes/Event
+
+chmod +x null-theme
+#sudo cp icon.png null-theme /bin
