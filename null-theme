@@ -27,6 +27,10 @@ class NULLtheme(Gtk.Application):
         theme2.set_label("Orange Theme (bad theme do not apply)")
         theme2.connect("toggled",self.toggled_radio_theme2)
 
+        theme3 = Gtk.RadioButton.new_from_widget(theme1)
+        theme3.set_label("Windows 10 Theme")
+        theme3.connect("toggled",self.toggled_radio_theme3)
+
         box2 = Gtk.Box(spacing=6)
 
         apply = Gtk.Button(label = "Apply")
@@ -43,6 +47,7 @@ class NULLtheme(Gtk.Application):
         main.set_margin_bottom(20)
         main.add(theme1)
         main.add(theme2)
+        main.add(theme3)
 
         status = self.check_theme()
         main.add(Gtk.Label("Status: "+status))
@@ -51,14 +56,19 @@ class NULLtheme(Gtk.Application):
         window.set_default_icon_from_file("icon.png")
         window.set_position(Gtk.WindowPosition.CENTER)
 
+#add a method to load these automatically from git
+
     def toggled_radio_theme1(self,button):
         self.command = 1
 
     def toggled_radio_theme2(self,button):
         self.command = 2
 
+    def toggled_radio_theme3(self,button):
+        self.command = 3
+
     def check_theme(self):
-        cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event branch | grep \*"
+        cmd =  "git --git-dir=Theme/.git --work-tree=Theme branch | grep \*"
         branch = subprocess.check_output(cmd,shell=True)
         print (branch)
         if branch == b'* master\n':
@@ -74,18 +84,26 @@ class NULLtheme(Gtk.Application):
         print (self.command)
 
         if self.command == 1:
-            cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event checkout blue-face-theme"
+            cmd =  "git --git-dir=Theme/.git --work-tree=Theme checkout blue-face-theme"
             branch = subprocess.check_output(cmd,shell=True)
-            os.system('dconf load /org/cinnamon/ < themeset')
+            os.system('dconf load /org/cinnamon/ < Theme/Dconf/dconf')
             print (branch)
             #self.message_dialog()
 
         elif self.command == 2:
-            cmd =  "git --git-dir=$HOME/.themes/Event/.git --work-tree=$HOME/.themes/Event checkout Orange-Flat"
+            cmd =  "git --git-dir=Theme/.git --work-tree=Theme checkout Orange-Flat"
             branch = subprocess.check_output(cmd,shell=True)
-            os.system('dconf load /org/cinnamon/ < themeset')
+            os.system('dconf load /org/cinnamon/ < Theme/Dconf/dconf')
             print (branch)
             #self.message_dialog()
+
+        elif self.command == 3:
+            cmd =  "git --git-dir=Theme/.git --work-tree=Theme checkout WIN10"
+            branch = subprocess.check_output(cmd,shell=True)
+            os.system('dconf load /org/cinnamon/ < Theme/Dconf/dconf')
+            print (branch)
+
+
             '''
     def message_dialog(self):
         content_area = self.message.get_content_area()

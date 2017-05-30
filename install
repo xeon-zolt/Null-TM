@@ -1,6 +1,14 @@
 #!/bin/bash
-
-git clone https://github.com/xeon-zolt/Theme.git $HOME/.themes/Event
-
+cd Theme
+git submodule init
+git submodule update
+cd ..
 chmod +x null-theme
+command=$(echo $PWD)
+#add a command to check if links are already avaliable
+ln -s $command/Theme/Event-Theme $HOME/.themes/
+
+mkdir $HOME/.Wallpaper
+ln -s $command/Theme/Wallpaper $HOME/.Wallpaper/
+
 #sudo cp icon.png null-theme /bin

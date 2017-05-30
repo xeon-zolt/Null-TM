@@ -1,8 +1,0 @@
-[/]
-
-[desktop/wm/preferences]
-button-layout=':minimize,maximize,close'
-theme='Event'
-
-[desktop/interface]
-gtk-theme='Event'
